@@ -28,18 +28,18 @@ The dataset derives 3 sections present in a company’s annual financial report,
  ## **Process**
  
  The process of the project goes as follows:
-  1. **Data exploration** (see DataExploration.R file)
+  1. **Data exploration** (see *DataExploration.R* file)
       - Reviewed top common words as unigram & bigram
-  2. **Data cleaning** (see DataExploration.R file)
+  2. **Data cleaning** (see *DataExploration.R* file)
       - Tokenize words
       - Remove common stop words (e.g. the, a)
       - Remove whitespace
       - Convert all words to lowercase
-  3. **Text Mining** (see PredictiveAnalytics.R file)
+  3. **Text Mining** (see *PredictiveAnalytics.R* file)
       - Using Loughran lexicon that categorizes text into 6 sentiments (constraining, litigious, negative, positive, superfluous, uncertainty)
-  4. **Predictive Analytics** (see PredictiveAnalytics.R file)
+  4. **Predictive Analytics** (see *PredictiveAnalytics.R* file)
       - Using logistic regression & decision tree
-  5. **Results** (see PredictiveAnalytics.R file)
+  5. **Results** (see *PredictiveAnalytics.R* file)
       - Best model: decision tree with 3 predictor variables (sentiment, word, word count) yielded 73% accuracy on train & 47% accuracy on test
 
-See 10K Text Mining for Predictive Analysis.pdf for summary of each stage process.
+See *10K Text Mining for Predictive Analysis.pdf* for summary of each stage process.
