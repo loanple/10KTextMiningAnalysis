@@ -26,6 +26,7 @@ The dataset derives 3 sections present in a company’s annual financial report,
   - Auditor’s Comments: an optional segment included in the report to delineate any additional information that could highlight the company’s prospects moving forward. 
   
  **Process**
+ 
  The process of the project goes as follows:
   1. Data exploration
   2. Data cleaning
