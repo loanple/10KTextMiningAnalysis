@@ -41,3 +41,5 @@ The dataset derives 3 sections present in a company’s annual financial report,
       - Using logistic regression & decision tree
   5. **Results** (see PredictiveAnalytics.R file)
       - Best model: decision tree with 3 predictor variables (sentiment, word, word count) yielded 73% accuracy on train & 47% accuracy on test
+
+See 10K Text Mining for Predictive Analysis.pdf for summary of each stage process.
