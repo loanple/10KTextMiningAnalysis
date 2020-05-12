@@ -1,11 +1,11 @@
 # 10K Text Mining Analysis
 The project aims to model financial sentiment – using sentiment analysis and text mining– to predict stock price fluctuations. Leveraging sentiment analysis, we will systematically process the valence of words in various companies’ annual financial reports from Q12019-Q12020. Applying this analytical tool will enable stakeholders to quickly gauge whether the tone of these filings is positive, negative, or otherwise litigious to model the companies’ stock movements.
 
-**Problem Statement**
+## **Problem Statement**
 
 The project will evaluate whether the sentiment of 3 sections in a firm’s SEC Form 10-K is predictive of the firm’s stock fluctuation– namely, whether the stock price categorically increased or decreased. 
 
-**Dataset**
+## **Dataset**
 
 The dataset includes segments from 10 companies’ financial annual reports chosen from the 10 largest consumer discretionary stocks, as indicated by the S&P 500 index in early March 2020. The unique identifier are the below-specified companies chosen:
   - Amazon (AMZN)
