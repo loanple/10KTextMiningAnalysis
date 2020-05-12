@@ -35,6 +35,7 @@ The dataset derives 3 sections present in a company’s annual financial report,
       - Remove common stop words (e.g. the, a)
       - Remove whitespace
       - Convert all words to lowercase
+      - Stemmed words
   3. **Text Mining** (see *PredictiveAnalytics.R* file)
       - Using Loughran lexicon that categorizes text into 6 sentiments (constraining, litigious, negative, positive, superfluous, uncertainty)
   4. **Predictive Analytics** (see *PredictiveAnalytics.R* file)
