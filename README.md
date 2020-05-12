@@ -31,7 +31,7 @@ The dataset derives 3 sections present in a company’s annual financial report,
   1. Data exploration (see DataExploration.R file)
   2. Data cleaning (see DataExploration.R file)
   3. Text Mining (see PredictiveAnalytics.R file)
-      - Using Loughran lexicon that categorizes text into 6 sentiments (constraining, litigious, negative, positive, superfluous,uncertainty)
+      - Using Loughran lexicon that categorizes text into 6 sentiments (constraining, litigious, negative, positive, superfluous, uncertainty)
   4. Predictive Analytics (see PredictiveAnalytics.R file)
       - Using logistic regression & decision tree
   5. Results (see PredictiveAnalytics.R file)
