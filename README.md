@@ -27,7 +27,6 @@ The dataset derives 3 sections present in a company’s annual financial report,
   
  ## **Process**
  
- The process of the project goes as follows:
   1. **Data exploration** (see *DataExploration.R* file)
       - Reviewed top common words as unigram & bigram
   2. **Data cleaning** (see *DataExploration.R* file)
