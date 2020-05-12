@@ -28,8 +28,8 @@ The dataset derives 3 sections present in a company’s annual financial report,
  **Process**
  
  The process of the project goes as follows:
-  1. Data exploration
-  2. Data cleaning
-  3. Text Mining
-  4. Predictive Analytics
-  5. Results
+  1. Data exploration (see DataExploration.R file)
+  2. Data cleaning (see DataExploration.R file)
+  3. Text Mining (see PredictiveAnalytics.R file)
+  4. Predictive Analytics (see PredictiveAnalytics.R file)
+  5. Results (see PredictiveAnalytics.R file)
