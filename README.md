@@ -25,7 +25,7 @@ The dataset derives 3 sections present in a company’s annual financial report,
   - Management Discussion: outlines the company’s short term & long term goals, future expenses, and most importantly estimated future revenues 
   - Auditor’s Comments: an optional segment included in the report to delineate any additional information that could highlight the company’s prospects moving forward. 
   
- **Process**
+ ## **Process**
  
  The process of the project goes as follows:
   1. Data exploration (see DataExploration.R file)
