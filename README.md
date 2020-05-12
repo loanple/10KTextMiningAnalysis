@@ -28,6 +28,7 @@ The dataset derives 3 sections present in a company’s annual financial report,
  ## **Process**
  
   1. **Data exploration** (see *DataExploration.R* file)
+      - Reviewed mean character count, word count, sentences
       - Reviewed top common words as unigram & bigram
   2. **Data cleaning** (see *DataExploration.R* file)
       - Tokenize words
