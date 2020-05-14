@@ -1,0 +1,567 @@
+---
+title: "10K Text Mining Analysis"
+author: "Loan Le"
+date: "5/12/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The project aims to model financial sentiment– using sentiment analysis and text mining– to predict stock price fluctuations. Leveraging sentiment analysis, the model will systematically process the valence of words in various companies’ annual financial reports from 3 sections - Risk Factors, Management's Discussion, and Auditor's comments.
+
+**Packages Used:**
+
+```{r, message = FALSE}
+library(readxl) #read excel
+library(tidyverse) #data cleaning
+library(tidytext) #text mining
+library(textstem) #text mining
+library(caTools) #logistic regression
+library(rpart); library(rpart.plot) #decision tree
+```
+
+```{r, echo=FALSE, message = FALSE}
+#dataset
+project <- read_excel("/Users/loanple/Desktop/Winter2020/5205/Project/TEXT MINING DATASET2.xlsx")
+
+#converting movement variable to factor
+project$Movement <- as.factor(project$Movement)
+
+```
+
+
+## Data Exploration
+
+* 10 Companies:
+
+```{r, echo=FALSE}
+#Companies
+unique(project$TICKER)
+```
+
+* Data Structure:
+```{r, echo=FALSE}
+str(project)
+```
+
+&nbsp;
+  
+## Text Mining
+
+* Stop words removed
+
+#### Unigram
+
+```{r pressure, echo=FALSE, message=FALSE}
+  project %>%
+    unnest_tokens(word, `RISK FACTORS`)%>%
+    select(word)%>%
+    anti_join(stop_words)%>%
+    group_by(word)%>%
+    summarize(count = n())%>%
+    ungroup()%>%
+    arrange(desc(count))%>%
+    top_n(25) %>% ggplot(aes(x=reorder(word,count), y=count, fill=count))+
+    geom_col()+
+    xlab('words')+
+    coord_flip()+
+    ggtitle('Top Words for Risk Factors - Unigram')
+
+```
+
+```{r, echo=FALSE, message=FALSE}
+  project %>%
+    unnest_tokens(word, `MANAGEMENT'S DISCUSSION`)%>%
+    select(word)%>%
+    anti_join(stop_words)%>%
+    group_by(word)%>%
+    summarize(count = n())%>%
+    ungroup()%>%
+    arrange(desc(count))%>%
+    top_n(25) %>% ggplot(aes(x=reorder(word,count), y=count, fill=count))+
+    geom_col()+
+    xlab('words')+
+    coord_flip() +
+    ggtitle("Top Words for Management's Discussion - Unigram")
+```
+
+```{r, echo=FALSE, message=FALSE}
+project %>%
+    unnest_tokens(word, `AUDITORS COMMENTS`)%>%
+    select(word)%>%
+    anti_join(stop_words)%>%
+    group_by(word)%>%
+    summarize(count = n())%>%
+    ungroup()%>%
+    arrange(desc(count))%>%
+    top_n(25) %>% ggplot(aes(x=reorder(word,count), y=count, fill=count))+
+    geom_col()+
+    xlab('words')+
+    coord_flip() +
+    ggtitle("Top Words for Auditor's Comment - Unigram")
+```
+
+#### Bigram
+
+```{r, echo=FALSE, message=FALSE}
+  rf_binary <- project %>%
+    unnest_tokens(bigram,`RISK FACTORS`, token = "ngrams", n = 2);
+  #removing stop words
+  rf_bigrams <- rf_binary %>%
+    separate(bigram, c("word1", "word2"), sep = " ")
+  rf_filtered <- rf_bigrams  %>%
+    filter(!word1 %in% stop_words$word) %>%
+    filter(!word2 %in% stop_words$word)
+  # new bigram counts:
+  rf_counts <- rf_filtered %>% 
+    count(word1, word2, sort = TRUE)
+  #combining word1 + word2
+  rf_counts$combined = paste(rf_counts$word1,rf_counts$word2)
+  #graphing
+  rf_counts_n16<-rf_counts %>%filter(n>16)
+  ggplot(data = rf_counts_n16, mapping = aes(x = reorder(combined, n), n)) + 
+    geom_bar(stat = "identity") + coord_flip() +
+    ggtitle("Top Words for Risk Factors - Bigram") +
+    xlab("bigram words") +
+    ylab("count")
+```
+
+```{r, echo=FALSE, message=FALSE}
+  md_binary <- project %>%
+    unnest_tokens(bigram,`MANAGEMENT'S DISCUSSION`, token = "ngrams", n = 2);
+  #removing stop words
+  md_bigrams <- md_binary %>%
+    separate(bigram, c("word1", "word2"), sep = " ")
+  md_filtered <- md_bigrams  %>%
+    filter(!word1 %in% stop_words$word) %>%
+    filter(!word2 %in% stop_words$word)
+  # new bigram counts:
+  md_counts <- md_filtered %>% 
+    count(word1, word2, sort = TRUE)
+  #combining word1 + word2
+  md_counts$combined = paste(md_counts$word1,md_counts$word2)
+  #graphing
+  md_counts_n10<-md_counts %>%filter(n>10)
+  ggplot(data = md_counts_n10, mapping = aes(x = reorder(combined, n), n)) + 
+    geom_bar(stat = "identity") + coord_flip() +
+    ggtitle("Top Words for Management's Discussion - Bigram") +
+    xlab("bigram words") +
+    ylab("count")
+```
+
+```{r, echo=FALSE, message=FALSE}
+
+  ac_binary <- project %>%
+    unnest_tokens(bigram,`AUDITORS COMMENTS`, token = "ngrams", n = 2);
+  #removing stop words
+  ac_bigrams <- ac_binary %>%
+    separate(bigram, c("word1", "word2"), sep = " ")
+  ac_filtered <- ac_bigrams  %>%
+    filter(!word1 %in% stop_words$word) %>%
+    filter(!word2 %in% stop_words$word)
+  # new bigram counts:
+  ac_counts <- ac_filtered %>% 
+    count(word1, word2, sort = TRUE)
+  #combining word1 + word2
+  ac_counts$combined = paste(ac_counts$word1,ac_counts$word2)
+  #graphing
+  ac_counts_n10<-ac_counts %>%filter(n>10)
+  ggplot(data = ac_counts_n10, mapping = aes(x = reorder(combined, n), n)) + 
+    geom_bar(stat = "identity") + coord_flip()  +
+    ggtitle("Top Words for Auditor's Comments - Bigram") +
+    xlab("bigram words") +
+    ylab("count")
+
+```
+
+***  
+  
+## Data Cleaning
+
+* Convert all words to lowercase:
+```{r}
+project$`RISK FACTORS`<- tolower(project$`RISK FACTORS`)
+project$`MANAGEMENT'S DISCUSSION`<- tolower(project$`MANAGEMENT'S DISCUSSION`)
+project$`AUDITORS COMMENTS`<- tolower(project$`AUDITORS COMMENTS`)
+```
+
+* Stem words:
+```{r}
+project$AC_stem <- project$`AUDITORS COMMENTS` %>% stem_strings()
+project$MD_stem <- project$`MANAGEMENT'S DISCUSSION` %>% stem_strings()
+project$RF_stem <- project$`RISK FACTORS` %>% stem_strings()
+```
+
+&nbsp;
+
+***
+  
+## Loughran Financial Lexicon - Sentiment Analysis
+
+This section of code sets up the section variable dataframes for analysis by utilizing the sentiment analyzer lexicon - Loughran. The 6 sentiment categories are Constraining, Litigious, Positive, Negative, Superfluous, and Uncertainty.
+```{r, message = FALSE}
+RFstem_loughran <- project %>%
+  unnest_tokens(word, `RF_stem`) %>%
+  anti_join(stop_words) %>%
+  count(TICKER,`STOCK PRICE PRE`,`STOCK PRICE POST`,Movement, word, sort = TRUE) %>%
+  ungroup() %>%
+  inner_join(get_sentiments("loughran"), by = "word");
+
+MDstem_loughran <- project %>%
+  unnest_tokens(word, `MD_stem`) %>%
+  anti_join(stop_words) %>%
+  count(TICKER,`STOCK PRICE PRE`,`STOCK PRICE POST`,Movement, word, sort = TRUE) %>%
+  ungroup() %>%
+  inner_join(get_sentiments("loughran"), by = "word")
+
+ACstem_loughran <- project %>%
+  unnest_tokens(word, `AC_stem`) %>%
+  anti_join(stop_words) %>%
+  count(TICKER,`STOCK PRICE PRE`,`STOCK PRICE POST`,Movement, word, sort = TRUE) %>%
+  ungroup() %>%
+  inner_join(get_sentiments("loughran"), by = "word")
+```
+
+**Risk Factors:**
+```{r, echo=FALSE}
+RFstem_loughran
+```
+
+**Management's Discussion:**
+```{r, echo=FALSE}
+MDstem_loughran
+```
+
+**Auditor's Comments:**
+```{r, echo=FALSE}
+ACstem_loughran 
+```
+
+&nbsp;
+
+#### Risk Factors:
+
+```{r, echo=FALSE,message=FALSE}
+RFstem_loughran %>% group_by(sentiment) %>%
+      top_n(10, n) %>%
+      ungroup() %>%
+      mutate(word = reorder(word, n)) %>%
+      ggplot(aes(word, n)) +
+      geom_col() +
+      coord_flip() +
+      facet_wrap(~ sentiment, scales = "free") +
+      ggtitle("Frequency of Words by Sentiment - Risk Factors")+
+      ylab("count")
+```
+
+```{r, echo=FALSE}
+RFstem_loughran %>%
+      count(sentiment, TICKER) %>%
+      spread(sentiment, n, fill = 0) %>%
+      mutate(score = (positive - negative) / (positive + negative)) %>%
+      mutate(TICKER = reorder(TICKER, score)) %>%
+      ggplot(aes(TICKER, score, fill = score > 0)) +
+      geom_col(show.legend = FALSE) +
+      coord_flip() +
+      labs(x = "company",
+           y = "positivty score from -1 to 1") +
+      ggtitle("Positivity Score by Ticker - Risk Factors")
+```
+
+```{r, echo =FALSE}
+RFstem_loughran %>%
+      count(sentiment, TICKER) %>%
+      ggplot(aes(fill=sentiment, y=n, x=TICKER)) + 
+      coord_flip()+
+      geom_bar(position="fill", stat="identity") +
+      ggtitle("Sentiment Breakdown by Ticker - Risk Factor")+
+      ylab("%")+
+      xlab("")
+```
+
+&nbsp;
+
+#### Management's Discussion:
+
+```{r, echo=FALSE}
+  MDstem_loughran %>% group_by(sentiment) %>%
+  top_n(10, n) %>%
+    ungroup() %>%
+    mutate(word = reorder(word, n)) %>%
+    ggplot(aes(word, n)) +
+    geom_col() +
+    coord_flip() +
+    facet_wrap(~ sentiment, scales = "free") +
+    ggtitle("Frequency of Words by Sentiment - Management's Discussion")+
+      ylab("count")
+```
+
+```{r, echo = FALSE}
+MDstem_loughran %>%
+    count(sentiment, TICKER) %>%
+    spread(sentiment, n, fill = 0) %>%
+    mutate(score = (positive - negative) / (positive + negative)) %>%
+    mutate(TICKER = reorder(TICKER, score)) %>%
+    ggplot(aes(TICKER, score, fill = score > 0)) +
+    geom_col(show.legend = FALSE) +
+    coord_flip() +
+    labs(x = "company",
+           y = "positivty score from -1 to 1") +
+      ggtitle("Positivity Score by Ticker - Management's Discussion") 
+```
+
+```{r, echo = FALSE}
+MDstem_loughran %>%
+    count(sentiment, TICKER) %>%
+    ggplot(aes(fill=sentiment, y=n, x=TICKER)) + 
+    coord_flip()+
+    geom_bar(position="fill", stat="identity") +
+    ggtitle("Sentiment Breakdown by Ticker - Management's Discussion")+
+      ylab("%")+
+      xlab("")
+```
+
+&nbsp;
+
+#### Auditor's Comments:
+
+```{r, echo=FALSE}
+ACstem_loughran %>% group_by(sentiment) %>%
+  top_n(10, n) %>%
+    ungroup() %>%
+    mutate(word = reorder(word, n)) %>%
+    ggplot(aes(word, n)) +
+    geom_col() +
+    coord_flip() +
+    facet_wrap(~ sentiment, scales = "free") +
+    ggtitle("Frequency of Words by Sentiment - Auditor's Comments")+
+      ylab("count")
+```
+
+```{r, echo=FALSE}
+ACstem_loughran %>%
+    count(sentiment, TICKER) %>%
+    spread(sentiment, n, fill = 0) %>%
+    mutate(score = (positive - negative) / (positive + negative)) %>%
+    mutate(TICKER = reorder(TICKER, score)) %>%
+    ggplot(aes(TICKER, score, fill = score > 0)) +
+    geom_col(show.legend = FALSE) +
+    coord_flip() +
+    labs(x = "company",
+           y = "positivty score from -1 to 1") +
+      ggtitle("Positivity Score by Ticker - Auditor's Comments") 
+```
+
+```{r, echo=FALSE}
+ACstem_loughran %>%
+    count(sentiment, TICKER) %>%
+    ggplot(aes(fill=sentiment, y=n, x=TICKER)) + 
+    coord_flip()+
+    geom_bar(position="fill", stat="identity") +
+    ggtitle("Sentiment Breakdown by Ticker - Management's Discussion")+
+      ylab("%")+
+      xlab("")
+```
+
+&nbsp;
+
+#### Merging All 3 Sections into Dataframe
+
+```{r}
+allstem<-bind_rows(list(ACstem_loughran,MDstem_loughran,RFstem_loughran))
+allstem <- allstem %>% group_by(TICKER,`STOCK PRICE PRE`,`STOCK PRICE POST`,Movement, sentiment,word) %>% summarise(sum(n))
+colnames(allstem)[which(names(allstem) == "sum(n)")] <- "word_count"
+allstem
+```
+&nbsp;
+```{r,echo=FALSE,message=FALSE}
+allstem %>% group_by(sentiment) %>%
+  top_n(20, word_count) %>%
+  ungroup() %>%
+  mutate(word = reorder(word, word_count)) %>%
+  ggplot(aes(word, word_count)) +
+  geom_col() +
+  coord_flip() +
+  facet_wrap(~ sentiment, scales = "free") +
+  ggtitle("Frequency of Words by Sentiment  - All Sections")+
+  ylab("count")
+```
+
+&nbsp;
+&nbsp;
+
+***
+
+## Splitting Dataset
+
+* Spliting dataset with 80% in train & 20% in test:
+
+```{r}
+  set.seed(617)
+  split = sample.split(Y = allstem$Movement, SplitRatio = 0.8)
+  train = allstem[split,]
+  test = allstem[!split,]
+```
+
+* Finding unique words in test that are not in train: 
+
+```{r}
+trainwords=unique(train$word)
+      testwords = unique(test$word)
+      
+      wwtest = c()
+      
+      for (i in testwords){
+        if (!(i %in% trainwords)){
+          wwtest = cbind(wwtest,i)
+        }
+      }
+      
+      wwtest
+```
+
+* Remove unique words in test:
+  + This is necessary since when the model tries to predict on test using the word variable, new words not in the train dataset will produce an error.
+
+```{r}
+testunique = c("break","spam","complaint","constrain","entail","therefrom","default","misconduct","stringent","reinterpret","thereof","poor","wrong")
+      testsubset = subset(test, ! word %in% testunique)
+```
+
+&nbsp;
+
+***
+
+## Logistic Regression
+
+#### Model 1
+
+* Model 1 includes two predictor variables (sentiment, word count)
+
+```{r, message = FALSE}
+model1 = glm(Movement~sentiment+word_count,data=train,family='binomial')
+summary(model1)
+```
+
+* Predict using train
+  
+```{r}
+pred1 = predict(model1,type="response")
+  ct1 = table(train$Movement,pred1>0.5); ct1 
+```
+
+    Accuracy rate of train data: 52.29%
+
+* Predict using test
+```{r, message= FALSE}
+pred1Test = predict(model1,newdata=test,type="response")
+  ct1Test = table(test$Movement,pred1Test>0.5); ct1Test
+```
+
+    Accuracy rate of test data: 51.92%
+
+&nbsp;
+
+#### Model 2
+* Model 2 includes three predictor variables (sentiment, word, word count)
+```{r, message = FALSE}
+model2 = glm(Movement~sentiment+word+word_count,data=train,family='binomial')
+summary(model2)
+```
+
+* Predict using train
+```{r}
+pred2 = predict(model2,type="response")
+  ct2 = table(train$Movement,pred2>0.5); ct2
+```
+
+    Accuracy rate of train data: 61.69%
+    
+  
+* Predict using test subset data
+
+```{r, message=FALSE}
+pred2Test = predict(model2,newdata=testsubset,type="response")
+  ct2Test = table(testsubset$Movement,pred2Test>0.5); ct1Test
+```
+
+    Accuracy rate of test data: 47.78%
+
+&nbsp;
+&nbsp;
+
+## Decision Tree
+
+#### Model 1
+
+* Model 1 includes two predictor variables (sentiment, word count)
+
+```{r}
+tree1 = rpart(Movement~sentiment+word_count,data=train, method="class")
+summary(tree1)
+```
+
+* Predict using train
+
+```{r}
+predTree1 = predict(tree1,type="class")
+ct = table(train$Movement,predTree1); ct
+```
+
+    Accuracy rate of train data: 52.77%
+
+* Predict using test
+
+```{r}
+predTree1_test = predict(tree1,newdata=test,type="class")
+  ct = table(test$Movement,predTree1_test); ct
+```
+
+    Accuracy rate of test data: 50.96%
+
+&nbsp;
+
+#### Model 2
+
+* Model 2 includes three predictor variables (sentiment, word, word count)
+
+```{r}
+tree2 = rpart(Movement~sentiment+word_count+word,data=train,method="class")
+summary(tree2)
+```
+
+* Predict using train
+
+```{r}
+predTree2 = predict(tree2,type="class")
+ct = table(train$Movement,predTree2); ct
+```
+
+    Accuracy rate of train data: 72.77%
+
+* Predict using test subset
+
+```{r}
+ predTree2_test = predict(tree2,newdata=testsubset,type="class")
+  ct = table(testsubset$Movement,predTree2_test); ct
+```
+
+    Accuracy rate of test data: **46.67%**
+
+
+&nbsp;
+&nbsp;
+
+***
+
+## Conclusion
+
+From the research conducted, annual financial reports can be indicative of the direction of stock fluctuations by understanding key words that can deliminate certain sentiments. The best model used was the **Decision Tree** with **3 predictor variables** (sentiment, word, and word count) with a 73% accuracy rate on train data and a 47% accuracy rate on test data. Limitations of the project include sample size selection, volatility of external events, and ratio of words in each sentiment from the Loughran lexicon. 
+
+Next steps suggestions would be to increase the sample size of the dataset by including more companies and also, increasing the time span from previous annual reports. 
+
+&nbsp;
