@@ -1,3 +1,7 @@
+See markdown file: https://rpubs.com/loanple/615843
+
+***
+
 # 10K Text Mining Analysis
 The project aims to model financial sentiment – using sentiment analysis and text mining– to predict stock price fluctuations. Leveraging sentiment analysis, we will systematically process the valence of words in various companies’ annual financial reports from Q12019-Q12020. Applying this analytical tool will enable stakeholders to quickly gauge whether the tone of these filings is positive, negative, or otherwise litigious to model the companies’ stock movements.
 
