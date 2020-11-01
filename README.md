@@ -2,12 +2,12 @@ See markdown file: https://rpubs.com/loanple/615843
 
 ***
 
-# 10K Text Mining Analysis
+# 10Q Text Mining Analysis
 The project aims to model financial sentiment – using sentiment analysis and text mining– to predict stock price fluctuations. Leveraging sentiment analysis, we will systematically process the valence of words in various companies’ annual financial reports from Q12019-Q12020. Applying this analytical tool will enable stakeholders to quickly gauge whether the tone of these filings is positive, negative, or otherwise litigious to model the companies’ stock movements.
 
 ## **Problem Statement**
 
-The project will evaluate whether the sentiment of 3 sections in a firm’s SEC Form 10-K is predictive of the firm’s stock fluctuation– namely, whether the stock price categorically increased or decreased. 
+The project will evaluate whether the sentiment of 3 sections in a firm’s SEC Form 10-Q is predictive of the firm’s stock fluctuation– namely, whether the stock price categorically increased or decreased. 
 
 ## **Dataset**
 
@@ -24,7 +24,7 @@ The dataset includes segments from 10 companies’ financial annual reports chos
   - Ford Motor Co (F)
 
 
-The dataset derives 3 sections present in a company’s annual financial report, 10-K forms, from Q12019-Q12020, which discuss a firm’s current financial health and its future growth prospects. This section consists of character variables used for sentiment analysis. The 10-K sections included are be:
+The dataset derives 3 sections present in a company’s annual financial report, 10-Q forms, from Q12019-Q12020, which discuss a firm’s current financial health and its future growth prospects. This section consists of character variables used for sentiment analysis. The 10-Q sections included are be:
   - **Risk Factors**: outlines potential risk a company expects to face.
   - **Management Discussion**: outlines the company’s short term & long term goals, future expenses, and most importantly estimated future revenues 
   - **Auditor’s Comments**: an optional segment included in the report to delineate any additional information that could highlight the company’s prospects moving forward. 
